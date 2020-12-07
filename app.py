@@ -4,6 +4,8 @@ from models import *
 import models
 import commands
 from flask_user import UserManager
+from passlib.hash import pbkdf2_sha256
+
 
 app = Flask(__name__)
 
@@ -33,7 +35,8 @@ def login():
     if request.method == 'POST':
         email = request.form.get('username')
         password = request.form.get('password')
-        if User.query.filter_by(email=email).first():
+        user = User.query.filter_by(email=email).first()
+        if user and pbkdf2_sha256.verify(password, user.password):
             return 'YOU ARE LOGGED IN'
         else:
             return 'YOU ARE NOT REGISTERED'
@@ -53,6 +56,7 @@ def register():
         state = request.form.get("state")
         postcode = request.form.get("postcode")
         password = request.form.get("password")
+        hashed = pbkdf2_sha256.hash(password)
         print(username, email)
 
         user_role = Role.query.filter_by(name='User').first()
@@ -68,7 +72,7 @@ def register():
             last_name=last_name,
             username=username,
             email=email,
-            password=password,
+            password=hashed,
             address=[new_address],
             roles=[user_role]
         )
