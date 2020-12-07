@@ -1,15 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for
-from database import init_app
+import database
 from models import *
+import models
+import commands
 from flask_user import UserManager
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['USER_EMAIL_SENDER_EMAIL'] = "forgeteatmeds@gmail.com"
-app.config['SECRET_KEY'] = "thisissecret"
+app.config['SECRET_KEY'] = "thisissecret3050hellosecretjasddafkjsdalfjlksd"
 
-init_app(app)
+database.init_app(app)
+commands.init_app(app)
+
 
 user_manager = UserManager(app, db, User)
 
@@ -29,7 +33,10 @@ def login():
     if request.method == 'POST':
         email = request.form.get('username')
         password = request.form.get('password')
-        return 'YOU ARE LOGGED IN'
+        if User.query.filter_by(email=email).first():
+            return 'YOU ARE LOGGED IN'
+        else:
+            return 'YOU ARE NOT REGISTERED'
     else:
         return render_template('login.html')
 
@@ -47,6 +54,32 @@ def register():
         postcode = request.form.get("postcode")
         password = request.form.get("password")
         print(username, email)
+
+        user_role = Role.query.filter_by(name='User').first()
+        new_address = Address(
+            address_1=address_1,
+            address_2=address_2,
+            state=state,
+            postcode=postcode
+        )
+
+        new_user = User(
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=email,
+            password=password,
+            address=[new_address],
+            roles=[user_role]
+        )
+
+        db.session.add(new_user)
+
+        db.session.add(user_role)
+        db.session.add(user_role)
+        db.session.add(user_role)
+
+        db.session.commit()
         return redirect(url_for('login'))
     else:
         return render_template('register.html')

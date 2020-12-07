@@ -5,12 +5,12 @@ from flask_user import UserMixin
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(100), primary_key=True)
-    last_name = db.Column(db.String(100), primary_key=True)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
     username = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
-    address = db.relationship('addresses', backref='user', lazy=True)
+    address = db.relationship('Address', backref='user', lazy=True)
     roles = db.relationship('Role', secondary='user_roles')
 
 
@@ -20,7 +20,7 @@ class Address(db.Model):
     address_1 = db.Column(db.String(500), nullable=False)
     address_2 = db.Column(db.String(500), nullable=False)
     state = db.Column(db.String(20), nullable=False)
-    postcode = db.Column(db.Integer)
+    postcode = db.Column(db.String(20), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
