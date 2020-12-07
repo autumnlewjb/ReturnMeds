@@ -5,11 +5,13 @@ import models
 import commands
 from flask_user import UserManager
 from passlib.hash import pbkdf2_sha256
+import os
 
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['USER_EMAIL_SENDER_EMAIL'] = "forgeteatmeds@gmail.com"
 app.config['SECRET_KEY'] = "thisissecret3050hellosecretjasddafkjsdalfjlksd"
 
