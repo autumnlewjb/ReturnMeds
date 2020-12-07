@@ -80,10 +80,6 @@ def register():
 
         db.session.add(new_user)
 
-        db.session.add(user_role)
-        db.session.add(user_role)
-        db.session.add(user_role)
-
         db.session.commit()
         return redirect(url_for('login'))
     else:
