@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import database
 from models import *
-import models
 import commands
 from flask_user import UserManager
 from passlib.hash import pbkdf2_sha256
