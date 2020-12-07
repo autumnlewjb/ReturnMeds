@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='register.css')}}">
+{% endblock %}
+
+{% block body %}
+<div>
+    <div class="container">
+        <div class="row page-title">
+            <div class="col">
+                <h1>Register</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col box align-middle">
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <input type="text" class="form-control" placeholder="First Name">
+                        </div>
+                        <div class="form-group col">
+                            <input type="text" class="form-control" placeholder="Last Name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Email address">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Address Line 1">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Address Line 2">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <select class="form-control">
+                                <option selected value="">Choose State</option>
+                                <option value="Kedah">Perlis</option>
+                                <option value="Kedah">Kedah</option>
+                                <option value="Kedah">Pulau Pinang</option>
+                                <option value="Kedah">Perak</option>
+                                <option value="Kedah">Pahang</option>
+                                <option value="Kedah">Kelantan</option>
+                                <option value="Kedah">Terengganu</option>
+                                <option value="Kedah">Selangor</option>
+                                <option value="Kedah">Melaka</option>
+                                <option value="Kedah">Negeri Sembilan</option>
+                                <option value="Kedah">Johor</option>
+                                <option value="Kedah">Sabah</option>
+                                <option value="Kedah">Sarawak</option>
+                                <option value="KL">Kuala Lumpur</option>
+                                <option value="KL">Putrajaya</option>
+                                <option value="KL">Labuan</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Post Code">
+                    </div>
+                    <div class="form-group">
+                      <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                    </div>
+                    <button type="submit" class="btn btn-primary m-3">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

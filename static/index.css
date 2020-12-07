@@ -1,0 +1,12 @@
+html, body {
+    overflow: hidden;
+}
+
+body {
+    background: rgb(204, 241, 189);
+}
+
+.title {
+    font-family: 'Josefin Sans';
+    font-size: 2rem;
+}
