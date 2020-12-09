@@ -29,8 +29,7 @@ def load_user(user_id):
 
 @app.errorhandler(500)
 def page_not_found(e):
-    print(current_user)
-    return render_template('404.html', user=session['username']), 500
+    return render_template('404.html'), 500
 
 
 @app.route('/')
