@@ -22,7 +22,7 @@ class Address(db.Model):
     address_2 = db.Column(db.String(500), nullable=False)
     state = db.Column(db.String(20), nullable=False)
     postcode = db.Column(db.String(20), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=True)
 
 
 class Role(db.Model):
@@ -34,5 +34,5 @@ class Role(db.Model):
 class UserRoles(db.Model):
     __tablename__ = 'user_roles'
     id = db.Column(db.Integer(), primary_key=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
-    role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
+    user_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='CASCADE'))
+    role_id = db.Column(db.Integer(), db.ForeignKey(Role.id, ondelete='CASCADE'))
