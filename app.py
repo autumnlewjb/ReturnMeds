@@ -1,10 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for
+from datetime import date, datetime
+from flask import Flask, render_template, request, redirect, url_for, session
 import database
 from models import *
 import commands
 from flask_user import UserManager
+from flask_login import login_user, logout_user, current_user
 from passlib.hash import pbkdf2_sha256
 import os
+from firestore import *
 
 
 app = Flask(__name__)
@@ -38,7 +41,9 @@ def login():
         password = request.form.get('password')
         user = User.query.filter_by(email=email).first()
         if user and pbkdf2_sha256.verify(password, user.password):
-            return 'YOU ARE LOGGED IN'
+            login_user(user)
+            session['username'] = user.username
+            return redirect(url_for('user_home'))
         else:
             return 'YOU ARE NOT REGISTERED'
     else:
@@ -91,6 +96,92 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/admin')
+def admin_home():
+    return "Admin page"
+
+
+@app.route('/user')
+def user_home():
+    return render_template('user/user_home.html', user=current_user)
+
+
+@app.route('/partner')
+def partner_home():
+    return "Hello partner"
+
+
+@app.route('/profile')
+def profile():
+    return render_template('user/user_home.html', user=current_user)
+
+
+@app.route('/schedule', methods=['POST', 'GET'])
+def schedule():
+    if request.method == 'POST':
+        med_name = request.form.get("medicine-name")
+        expiry_date = request.form.get("expiry-date")
+        addr_1 = request.form.get("addr-1")
+        addr_2 = request.form.get("addr-2")
+        state = request.form.get("state")
+        postcode = request.form.get("postcode")
+        data = {
+            'username': current_user.username,
+            'medicine name': med_name,
+            'expiry date': expiry_date,
+            'address line 1': addr_1,
+            'address line 2': addr_2,
+            'state': state,
+            'status': 'pending',
+            'postcode': postcode
+        }
+        fdb.collection('schedule').document(str(datetime.now())).set(data)
+        return redirect(url_for('ongoing'))
+    else:
+        address_obj = current_user.address[0]
+        data = {
+            'addr-1': address_obj.address_1,
+            'addr-2': address_obj.address_2,
+            'state': address_obj.state,
+            'postcode': address_obj.postcode
+        }
+        return render_template('user/schedule.html', address=data)
+
+
+@app.route('/ongoing')
+def ongoing():
+    docs = fdb.collection('schedule').where('username', '==', current_user.username).stream()
+    records = list()
+    for doc in docs:
+        doc_dict = doc.to_dict()
+        doc_dict['timestamp'] = doc.id
+        records.append(doc_dict)
+    return render_template('user/ongoing.html', records=records)
+
+
+@app.route('/unschedule')
+def unschedule():
+    id = request.args.get('id')
+    fdb.collection('schedule').document(id).delete()
+    return redirect(url_for('ongoing'))
+
+
+@app.route('/detail')
+def detail():
+    return "detail page"
+
+
+@app.route('/history')
+def history():
+    return 'History page'
+
+
+@app.route('/logout')
+def logout():
+    if current_user:
+        logout_user()
+    return redirect(url_for('index'))
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-

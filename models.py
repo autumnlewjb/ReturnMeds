@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
+    reward = db.Column(db.Integer(), primary_key=False, default=0)
     address = db.relationship('Address', backref='user', lazy=True)
     roles = db.relationship('Role', secondary='user_roles')
 

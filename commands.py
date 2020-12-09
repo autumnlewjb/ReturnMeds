@@ -26,7 +26,7 @@ def start_debug():
         last_name='admin',
         username='admin',
         email='admin@returnmed.com',
-        password=pbkdf2_sha256.hash('lewjb2010'),
+        password=pbkdf2_sha256.hash('adminhehe'),
         address=[new_address],
         roles=[admin_role]
     )

@@ -1,0 +1,11 @@
+td {
+    text-align: left;
+    padding: 0.5rem;
+}
+
+.profile-box {
+    background-color: rgba(110, 223, 110, 0.76);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    filter: drop-shadow(3px 5px 10px rgba(92, 90, 90, 0.699));
+}
