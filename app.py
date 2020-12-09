@@ -168,12 +168,12 @@ def unschedule():
 
 @app.route('/detail')
 def detail():
-    return "detail page"
+    return render_template('user/detail.html')
 
 
 @app.route('/history')
 def history():
-    return 'History page'
+    return render_template('user/history.html')
 
 
 @app.route('/logout')
@@ -184,4 +184,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
