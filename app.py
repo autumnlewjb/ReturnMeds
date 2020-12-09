@@ -1,17 +1,17 @@
 from datetime import date, datetime
 from flask import Flask, render_template, request, redirect, url_for, session
-from flask_user.decorators import login_required
 import database
 from models import *
 import commands
-from flask_user import UserManager
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, LoginManager, login_required
 from passlib.hash import pbkdf2_sha256
 import os
 from firestore import *
 
 
 app = Flask(__name__)
+
+login_manager = LoginManager()
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -20,9 +20,12 @@ app.config['SECRET_KEY'] = "thisissecret3050hellosecretjasddafkjsdalfjlksd"
 
 database.init_app(app)
 commands.init_app(app)
+login_manager.init_app(app)
 
 
-user_manager = UserManager(app, db, User)
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.filter_by(id=user_id).first()
 
 
 @app.errorhandler(500)
@@ -193,4 +196,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
