@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
 import database
 from models import *
@@ -15,7 +15,6 @@ login_manager = LoginManager()
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-app.config['USER_EMAIL_SENDER_EMAIL'] = "forgeteatmeds@gmail.com"
 app.config['SECRET_KEY'] = "thisissecret3050hellosecretjasddafkjsdalfjlksd"
 
 database.init_app(app)
@@ -30,7 +29,8 @@ def load_user(user_id):
 
 @app.errorhandler(500)
 def page_not_found(e):
-    return render_template('404.html', user=current_user), 404
+    print(current_user)
+    return render_template('404.html', user=session['username']), 500
 
 
 @app.route('/')
@@ -196,4 +196,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
