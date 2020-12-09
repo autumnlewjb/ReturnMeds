@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_user.decorators import login_required
 import database
 from models import *
 import commands
@@ -26,7 +27,7 @@ user_manager = UserManager(app, db, User)
 
 @app.errorhandler(500)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return render_template('404.html', user=current_user), 404
 
 
 @app.route('/')
@@ -102,6 +103,7 @@ def admin_home():
 
 
 @app.route('/user')
+@login_required
 def user_home():
     return render_template('user/user_home.html', user=current_user)
 
@@ -112,11 +114,13 @@ def partner_home():
 
 
 @app.route('/profile')
+@login_required
 def profile():
     return render_template('user/user_home.html', user=current_user)
 
 
 @app.route('/schedule', methods=['POST', 'GET'])
+@login_required
 def schedule():
     if request.method == 'POST':
         med_name = request.form.get("medicine-name")
@@ -149,6 +153,7 @@ def schedule():
 
 
 @app.route('/ongoing')
+@login_required
 def ongoing():
     docs = fdb.collection('schedule').where('username', '==', current_user.username).stream()
     records = list()
@@ -160,6 +165,7 @@ def ongoing():
 
 
 @app.route('/unschedule')
+@login_required
 def unschedule():
     id = request.args.get('id')
     fdb.collection('schedule').document(id).delete()
@@ -167,16 +173,19 @@ def unschedule():
 
 
 @app.route('/detail')
+@login_required
 def detail():
     return render_template('user/detail.html')
 
 
 @app.route('/history')
+@login_required
 def history():
     return render_template('user/history.html')
 
 
 @app.route('/logout')
+@login_required
 def logout():
     if current_user:
         logout_user()
