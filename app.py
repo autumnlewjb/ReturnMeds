@@ -1,4 +1,5 @@
 from datetime import datetime
+from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session
 import database
 from models import *
@@ -26,6 +27,20 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(user_id)
 
+def role_required(role_name):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if session['username']:
+                user = User.query.filter_by(username=session['username']).first()
+                role_str = [r.name for r in user.roles]
+                print(role_str)
+                if role_name in role_str:
+                    return func(*args, **kwargs)
+            return redirect('/login')
+        return wrapper
+    return decorator
+
 
 @app.errorhandler(500)
 def page_not_found(e):
@@ -46,7 +61,7 @@ def login():
         if user and pbkdf2_sha256.verify(password, user.password):
             login_user(user)
             session['username'] = user.username
-            return redirect(url_for('user_home'))
+            return redirect(url_for('admin_home'))
         else:
             return 'YOU ARE NOT REGISTERED'
     else:
@@ -100,11 +115,14 @@ def about():
 
 
 @app.route('/admin')
+@role_required('Admin')
+@login_required
 def admin_home():
     return "Admin page"
 
 
 @app.route('/user')
+@role_required('User')
 @login_required
 def user_home():
     return render_template('user/user_home.html', user=current_user)
@@ -116,7 +134,7 @@ def partner_home():
 
 
 @app.route('/profile')
-@login_required
+@role_required('User')
 def profile():
     return render_template('user/user_home.html', user=current_user)
 
@@ -195,4 +213,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

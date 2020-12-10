@@ -28,7 +28,7 @@ def start_debug():
         email='admin@returnmed.com',
         password=pbkdf2_sha256.hash('adminhehe'),
         address=[new_address],
-        roles=[admin_role]
+        roles=[admin_role, user_role, partner_role]
     )
 
     db.session.add(new_user)
