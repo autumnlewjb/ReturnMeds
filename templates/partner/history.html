@@ -1,0 +1,26 @@
+{% extends 'partner/partner_base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='ongoing.css')}}">
+{% endblock %}
+
+{% block body %}
+<div class="list">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% for record in records %}
+                <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">{{record['medicine name']}}</h5>
+                      <h6 class="card-subtitle mb-2 text-muted"><i>{{record['status']}}</i></h6>
+                      <p>Scheduled on: {{record['timestamp']}}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

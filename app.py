@@ -1,6 +1,7 @@
 from datetime import datetime
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask.ctx import copy_current_request_context
 import database
 from models import *
 import commands
@@ -61,7 +62,13 @@ def login():
         if user and pbkdf2_sha256.verify(password, user.password):
             login_user(user)
             session['username'] = user.username
-            return redirect(url_for('admin_home'))
+            role_str = [r.name for r in current_user.roles]
+            if 'Admin' in role_str:
+                return redirect(url_for('admin_home'))
+            elif 'Partner' in role_str:
+                return redirect(url_for('partner_home'))
+            else:
+                return redirect(url_for('user_home'))
         else:
             return 'YOU ARE NOT REGISTERED'
     else:
@@ -132,11 +139,10 @@ def user_home():
 @role_required('Partner')
 @login_required
 def partner_home():
-    return "Hello partner"
+    return render_template('partner/partner_home.html', user=current_user)
 
 
 @app.route('/profile')
-@role_required('User')
 @login_required
 def profile():
     return render_template('user/user_home.html', user=current_user)
@@ -180,7 +186,7 @@ def schedule():
 @role_required('User')
 @login_required
 def ongoing():
-    docs = fdb.collection('schedule').where('username', '==', current_user.username).stream()
+    docs = fdb.collection('schedule').where('username', '==', current_user.username).where('status', '==', 'pending').stream()
     records = list()
     for doc in docs:
         doc_dict = doc.to_dict()
@@ -209,7 +215,13 @@ def detail():
 @role_required('User')
 @login_required
 def history():
-    return render_template('user/history.html')
+    returns = fdb.collection('schedule').where('username', '==', current_user.username).where('status', '==', 'Completed').stream()
+    returns_dict = list()
+    for r in returns:
+        temp = r.to_dict()
+        temp['timestamp'] = r.id
+        returns_dict.append(temp)
+    return render_template('user/history.html', records=returns_dict)
 
 
 @app.route('/logout')
@@ -218,6 +230,54 @@ def logout():
     if current_user:
         logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/partner-profile')
+@role_required('Partner')
+@login_required
+def partner_profile():
+    return render_template('partner/partner_home.html', user=current_user)
+
+
+@app.route('/partner-ongoing')
+@role_required('Partner')
+@login_required
+def partner_ongoing():
+    returns = fdb.collection('schedule').where('status', '==', 'pending').stream()
+    returns_dict = list()
+    for r in returns:
+        temp = r.to_dict()
+        temp['timestamp'] = r.id
+        returns_dict.append(temp)
+    return render_template('partner/ongoing.html', records=returns_dict)
+
+
+@app.route('/partner-complete')
+@role_required('Partner')
+@login_required
+def partner_complete():
+    doc_id = request.args.get('id')
+    doc = fdb.collection('schedule').document(doc_id)
+    doc.update({'status': 'Completed'})
+
+    current_user.reward += 1
+    user = User.query.filter_by(username=doc.get().to_dict()['username']).first()
+    user.reward += 1
+    db.session.commit()
+    return redirect(url_for('partner_ongoing'))
+
+
+@app.route('/partner-history')
+@role_required('Partner')
+@login_required
+def partner_history():
+    returns = fdb.collection('schedule').where('status', '==', 'Completed').stream()
+    returns_dict = list()
+    for r in returns:
+        temp = r.to_dict()
+        temp['timestamp'] = r.id
+        returns_dict.append(temp)
+    return render_template('partner/history.html', records=returns_dict)
 
 
 if __name__ == '__main__':
