@@ -21,17 +21,39 @@ def start_debug():
         postcode='05400'
     )
 
-    new_user = User(
+    new_admin = User(
         first_name='the',
         last_name='admin',
         username='admin',
         email='admin@returnmed.com',
         password=pbkdf2_sha256.hash('adminhehe'),
         address=[new_address],
-        roles=[admin_role]
+        roles=[admin_role, user_role, partner_role]
+    )
+
+    new_partner = User(
+        first_name='the',
+        last_name='partner',
+        username='partner',
+        email='partner@returnmed.com',
+        password=pbkdf2_sha256.hash('partnerhuhu'),
+        address=[new_address],
+        roles=[partner_role]
+    )
+
+    new_user = User(
+        first_name='the',
+        last_name='user',
+        username='user',
+        email='user@returnmed.com',
+        password=pbkdf2_sha256.hash('userhaha'),
+        address=[new_address],
+        roles=[user_role]
     )
 
     db.session.add(new_user)
+    db.session.add(new_admin)
+    db.session.add(new_partner)
 
     db.session.add(admin_role)
     db.session.add(user_role)

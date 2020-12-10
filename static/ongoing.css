@@ -7,3 +7,10 @@
 .card {
     margin: 0.5rem;
 }
+
+@media only screen and (orientation: portrait) {
+    .list {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
