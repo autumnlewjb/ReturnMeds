@@ -129,17 +129,21 @@ def user_home():
 
 
 @app.route('/partner')
+@role_required('Partner')
+@login_required
 def partner_home():
     return "Hello partner"
 
 
 @app.route('/profile')
 @role_required('User')
+@login_required
 def profile():
     return render_template('user/user_home.html', user=current_user)
 
 
 @app.route('/schedule', methods=['POST', 'GET'])
+@role_required('User')
 @login_required
 def schedule():
     if request.method == 'POST':
@@ -173,6 +177,7 @@ def schedule():
 
 
 @app.route('/ongoing')
+@role_required('User')
 @login_required
 def ongoing():
     docs = fdb.collection('schedule').where('username', '==', current_user.username).stream()
@@ -185,6 +190,7 @@ def ongoing():
 
 
 @app.route('/unschedule')
+@role_required('User')
 @login_required
 def unschedule():
     id = request.args.get('id')
@@ -193,12 +199,14 @@ def unschedule():
 
 
 @app.route('/detail')
+@role_required('User')
 @login_required
 def detail():
     return render_template('user/detail.html')
 
 
 @app.route('/history')
+@role_required('User')
 @login_required
 def history():
     return render_template('user/history.html')
