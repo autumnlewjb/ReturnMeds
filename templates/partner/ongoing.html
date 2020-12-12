@@ -2,13 +2,16 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{url_for('static', filename='ongoing.css')}}">
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-analytics.js"></script>
 {% endblock %}
 
 {% block body %}
 <div class="list">
     <div class="container-fluid">
         <div class="row">
-            <div class="col">
+            <div class="col record-list">
                 {% for record in records %}
                 <div class="card">
                     <div class="card-body">
@@ -24,5 +27,39 @@
         </div>
     </div>
 </div>
+<script>
+    // Initialize Cloud Firestore through Firebase
+    firebase.initializeApp({
+        apiKey: "AIzaSyBbazAhPXWwMql5isb1dva7q5nYHQjSrz8",
+        authDomain: "returnmeds-bd71b.firebaseapp.com",
+        projectId: "returnmeds-bd71b",
+        storageBucket: "returnmeds-bd71b.appspot.com",
+        messagingSenderId: "1001149789264",
+        appId: "1:1001149789264:web:b4b69c1e1df95b3e0ecd55",
+        measurementId: "G-MVES52LJ7Q"
+    });
+    firebase.analytics();
+    var db = firebase.firestore();
 
+    $(document).ready(function() {
+        db.collection("schedule").where("status", "==", "pending")
+            .onSnapshot(function(querySnapshot) {
+                $('.record-list').html("");
+                querySnapshot.forEach(function(doc) {
+                    var data = doc.data();
+                    $('.record-list').append(
+                        `<div class="card">
+                            <div class="card-body">
+                            <h5 class="card-title">${data['medicine name']}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted"><i>${data['status']}</i></h6>
+                            <p>Scheduled on: ${doc.id}</p>
+                            <a href="${data['status']}" class="card-link">More details</a>
+                            <a href="/partner-complete?id=${doc.id}" class="card-link">Complete</a>
+                            </div>
+                        </div>`
+                    );
+                });
+            });
+    });
+</script>
 {% endblock %}
