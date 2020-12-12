@@ -160,6 +160,7 @@ def schedule():
         state = request.form.get("state")
         postcode = request.form.get("postcode")
         data = {
+            'email': current_user.email,
             'username': current_user.username,
             'medicine name': med_name,
             'expiry date': expiry_date,
@@ -186,7 +187,7 @@ def schedule():
 @role_required('User')
 @login_required
 def ongoing():
-    docs = fdb.collection('schedule').where('username', '==', current_user.username).where('status', '==', 'pending').stream()
+    docs = fdb.collection('schedule').where('email', '==', current_user.email).where('status', '==', 'pending').stream()
     records = list()
     for doc in docs:
         doc_dict = doc.to_dict()
@@ -215,7 +216,7 @@ def detail():
 @role_required('User')
 @login_required
 def history():
-    returns = fdb.collection('schedule').where('username', '==', current_user.username).where('status', '==', 'Completed').stream()
+    returns = fdb.collection('schedule').where('email', '==', current_user.email).where('status', '==', 'Completed').stream()
     returns_dict = list()
     for r in returns:
         temp = r.to_dict()
@@ -243,13 +244,8 @@ def partner_profile():
 @role_required('Partner')
 @login_required
 def partner_ongoing():
-    returns = fdb.collection('schedule').where('status', '==', 'pending').stream()
-    returns_dict = list()
-    for r in returns:
-        temp = r.to_dict()
-        temp['timestamp'] = r.id
-        returns_dict.append(temp)
-    return render_template('partner/ongoing.html', records=returns_dict)
+    
+    return render_template('partner/ongoing.html')
 
 
 @app.route('/partner-complete')
