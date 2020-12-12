@@ -75,7 +75,8 @@
                     );
                 });
             });
-        $('body').delegate('.more-details', 'click', function(){
+        $('body').delegate('.more-details', 'click', function(e){
+            e.preventDefault();
             console.log('pressed');
             $(this).prev().toggle();
             if ($(this).prev().css('display') == 'none'){

@@ -12,9 +12,17 @@
                 {% for record in records %}
                 <div class="card">
                     <div class="card-body">
-                      <h5 class="card-title">{{record['medicine name']}}</h5>
-                      <h6 class="card-subtitle mb-2 text-muted"><i>{{record['status']}}</i></h6>
-                      <p>Scheduled on: {{record['timestamp']}}</p>
+                        <h5 class="card-title">{{record['medicine name']}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted"><i>{{record['status']}}</i></h6>
+                        <p>Scheduled on: {{record['timestamp']}}</p>
+                        <div class="hide-details" style="display: none;">
+                            <p>Username: {{record['username']}}</p>
+                            <p>Address Line 1: {{record['address line 1']}}</p>
+                            <p>Address Line 2: {{record['address line 2']}}</p>
+                            <p>PostCode: {{record['postcode']}}</p>
+                            <p>State: {{record['state']}}</p>
+                        </div>
+                        <a href="#" class="card-link more-details" id="">More details</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -22,5 +30,18 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function(){
+        $('.more-details').click(function(e){
+            e.preventDefault();
+            $(this).prev().toggle();
+            if ($(this).prev().css('display') == 'none'){
+                $(this).text("More Detail");
+            }else {
+                $(this).text("Less Detail");
+            }
+        });
+    });
+</script>
 
 {% endblock %}

@@ -34,7 +34,8 @@
 
 <script>
     $(document).ready(function(){
-        $('.more-details').click(function(){
+        $('.more-details').click(function(e){
+            e.preventDefault();
             $(this).prev().toggle();
             if ($(this).prev().css('display') == 'none'){
                 $(this).text("More Detail");
