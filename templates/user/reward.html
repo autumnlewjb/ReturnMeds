@@ -1,0 +1,54 @@
+{% extends 'user/user_base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='reward.css')}}">
+{% endblock %}
+
+{% block body %}
+<div class="list">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col" style="text-align: right;">
+                <a href="{{url_for('list_collab')}}" class="btn btn-danger">
+                    Claim Reward
+                </a>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col">
+                {% for reward in rewards %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{reward['title']}}</h5>
+                        <p>Claimed on: {{reward['timestamp']}}</p>
+                        <div class="hide-details" style="display: none;">
+                            <p>Place claimed: {{reward['organization']}}</p>
+                            <p>Cost: {{reward['cost']}} pt</p>
+                            <p>Before Claim: {{reward['before claim']}} pt</p>
+                            <p>After Claim: {{reward['after claim']}} pt</p>
+                        </div>
+                        <a href="#" class="card-link more-details" id="">More details</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('.more-details').click(function(e){
+            e.preventDefault();
+            $(this).prev().toggle();
+            if ($(this).prev().css('display') == 'none'){
+                $(this).text("More Detail");
+            }else {
+                $(this).text("Less Detail");
+            }
+        });
+    });
+</script>
+
+{% endblock %}

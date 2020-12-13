@@ -51,6 +51,18 @@ def start_debug():
         roles=[user_role]
     )
 
+    new_reward = Reward(
+        title='Body Check',
+        description='Free body check',
+        cost=2,
+    )
+
+    new_collab = Collab(
+        org_name='Hospital AA',
+        rewards=[new_reward],
+    )
+
+
     db.session.add(new_user)
     db.session.add(new_admin)
     db.session.add(new_partner)
@@ -59,8 +71,10 @@ def start_debug():
     db.session.add(user_role)
     db.session.add(partner_role)
 
-    db.session.commit()
+    db.session.add(new_reward)
+    db.session.add(new_collab)
 
+    db.session.commit()
 
 
 def init_app(app):

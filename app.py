@@ -276,5 +276,52 @@ def partner_history():
     return render_template('partner/history.html', records=returns_dict)
 
 
+@app.route('/reward/history')
+def reward_history():
+    rewards = fdb.collection('reward').where('email', '==', current_user.email).stream()
+    reward_dict = list()
+    for reward in rewards:
+        temp = reward.to_dict()
+        query = Reward.query.filter_by(id=int(temp['reward id'])).first()
+        temp['timestamp'] = reward.id
+        temp['title'] = query.title
+        temp['organization'] = query.collab.org_name
+        temp['cost'] = query.cost
+        reward_dict.append(temp)
+
+    return render_template('user/reward.html', rewards=reward_dict)
+
+
+@app.route('/reward/collab')
+def list_collab():
+    collabs = Collab.query.all()
+    return render_template('collab/list.html', collabs=collabs)
+
+
+@app.route('/reward/<int:id>/option')
+def list_reward(id):
+    collab = Collab.query.filter_by(id=id).first()
+    rewards = collab.rewards
+    return render_template('collab/select_reward.html', reward_opt=rewards)
+
+
+@app.route('/reward/<int:id>/claim')
+def claim_reward(id):
+    reward = Reward.query.filter_by(id=id).first()
+    current_user.reward -= reward.cost
+    db.session.commit()
+
+    data = {
+        'email': current_user.email,
+        'reward id': id,
+        'before reward': current_user.reward + reward.cost, 
+        'after reward': current_user.reward,
+    }
+
+    fdb.collection('reward').document(str(datetime.now())).set(data)
+
+    return redirect(url_for('profile'))
+
+
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

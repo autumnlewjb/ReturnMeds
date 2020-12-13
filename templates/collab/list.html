@@ -1,0 +1,25 @@
+{% extends 'user/user_base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='reward.css')}}">
+{% endblock %}
+
+{% block body %}
+<div class="list">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% for collab in collabs %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{collab.org_name}}</h5>
+                        <a href="/reward/{{collab.id}}/option" class="card-link more-details" id="">See rewards</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
