@@ -36,3 +36,19 @@ class UserRoles(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer(), db.ForeignKey(User.id))
     role_id = db.Column(db.Integer(), db.ForeignKey(Role.id))
+
+
+class Collab(db.Model):
+    __tablename__ = 'collabs'
+    id = db.Column(db.Integer(), primary_key=True)
+    org_name = db.Column(db.String(200), nullable=False)
+    rewards = db.relationship('Reward', backref='collab', lazy=True)
+
+
+class Reward(db.Model):
+    __tablename__ = 'rewards'
+    id = db.Column(db.Integer(), primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.String(500), nullable=True)
+    cost = db.Column(db.Integer())
+    collab_id = db.Column(db.Integer, db.ForeignKey(Collab.id))

@@ -8,8 +8,15 @@
     margin: 0.5rem;
 }
 
-#none-message {
-    text-align: center;
+.btn {
+    background-color: rgba(255, 217, 0, 0.705);
+    border-color:  rgba(255, 217, 0, 0.705);
+    color: black;
+}
+
+.btn:hover {
+    background: rgb(158, 158, 43);
+    border-color: rgb(158, 158, 43);
 }
 
 @media only screen and (orientation: portrait) {
