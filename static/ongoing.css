@@ -8,6 +8,10 @@
     margin: 0.5rem;
 }
 
+#none-message {
+    text-align: center;
+}
+
 @media only screen and (orientation: portrait) {
     .list {
         margin-left: 0;

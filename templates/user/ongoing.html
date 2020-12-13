@@ -27,6 +27,9 @@
                     </div>
                 </div>
                 {% endfor %}
+                {% if records|length == 0 %}
+                <p id="none-message">You have no ongoing returns. Start one now!</p>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -277,6 +277,8 @@ def partner_history():
 
 
 @app.route('/reward/history')
+@role_required('User')
+@login_required
 def reward_history():
     rewards = fdb.collection('reward').where('email', '==', current_user.email).stream()
     reward_dict = list()
@@ -293,12 +295,16 @@ def reward_history():
 
 
 @app.route('/reward/collab')
+@role_required('User')
+@login_required
 def list_collab():
     collabs = Collab.query.all()
     return render_template('collab/list.html', collabs=collabs)
 
 
 @app.route('/reward/<int:id>/option')
+@role_required('User')
+@login_required
 def list_reward(id):
     collab = Collab.query.filter_by(id=id).first()
     rewards = collab.rewards
@@ -306,6 +312,8 @@ def list_reward(id):
 
 
 @app.route('/reward/<int:id>/claim')
+@role_required('User')
+@login_required
 def claim_reward(id):
     reward = Reward.query.filter_by(id=id).first()
     current_user.reward -= reward.cost
@@ -324,4 +332,4 @@ def claim_reward(id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
