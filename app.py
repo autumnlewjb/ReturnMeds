@@ -1,6 +1,6 @@
 from datetime import datetime
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask.ctx import copy_current_request_context
 import database
 from models import *
@@ -248,19 +248,21 @@ def partner_ongoing():
     return render_template('partner/ongoing.html')
 
 
-@app.route('/partner-complete')
+@app.route('/partner-complete', methods=['POST', 'GET'])
 @role_required('Partner')
 @login_required
 def partner_complete():
-    doc_id = request.args.get('id')
-    doc = fdb.collection('schedule').document(doc_id)
-    doc.update({'status': 'Completed'})
-
-    current_user.reward += 1
-    user = User.query.filter_by(username=doc.get().to_dict()['username']).first()
-    user.reward += 1
-    db.session.commit()
-    return redirect(url_for('partner_ongoing'))
+    if (request.method == 'POST'):
+        email = request.form['email']
+        print(email)
+        current_user.reward += 1
+        user = User.query.filter_by(email=email).first()
+        user.reward += 1
+        db.session.commit()
+        
+        return jsonify({'status': 'done'})
+    else:
+        return redirect(url_for('partner_ongoing'))
 
 
 @app.route('/partner-history')

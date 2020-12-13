@@ -2,6 +2,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{url_for('static', filename='ongoing.css')}}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-analytics.js"></script>
@@ -80,7 +81,27 @@
         var doc = db.collection("schedule").doc(`${id}`);
         doc.update({'status': 'Completed'}).then(function() {
             console.log("Update successful");
-        })
+        });
+        var email = "";
+        doc.get().then(function(doc) {
+            if (doc.exists) {
+                var url = "/partner-complete";
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        email: doc.data()['email'],
+                        update: true
+                    }
+                }).done(function(data) {
+                    console.log(data.status);
+                });
+            }
+            
+        });
+        console.log(email);
+        
+        return false;
     }
     
     
