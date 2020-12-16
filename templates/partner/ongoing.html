@@ -12,8 +12,19 @@
 <div class="list">
     <div class="container-fluid">
         <div class="row">
-            <div class="col record-list">
-                
+            <div class="col">
+                <h3>Your checklist</h3>
+                <div class="accepted-list">
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h3>Available Returns</h3>
+                <div class="record-list">
+
+                </div>
             </div>
             <div class="none-message-container"></div>
         </div>
@@ -33,17 +44,19 @@
     firebase.analytics();
     var db = firebase.firestore();
 
-    $(document).ready(function() {
-        db.collection("schedule").where("status", "==", "pending")
-            .onSnapshot(function(querySnapshot) {
+    const collectorId = {{user.id}};
+
+    $(document).ready(function () {
+        db.collection("schedule").where("status", "==", "Pending")
+            .onSnapshot(function (querySnapshot) {
                 $('.record-list').html("");
                 if (querySnapshot.empty) {
                     $('.record-list').append(`<p id="none-message">All clear!</p>`);
-                }else {
-                    querySnapshot.forEach(function(doc) {
-                    var data = doc.data();
-                    $('.record-list').append(
-                        `<div class="card">
+                } else {
+                    querySnapshot.forEach(function (doc) {
+                        var data = doc.data();
+                        $('.record-list').append(
+                            `<div class="card">
                             <div class="card-body">
                             <h5 class="card-title">${data['medicine name']}</h5>
                             <h6 class="card-subtitle mb-2 text-muted"><i>${data['status']}</i></h6>
@@ -56,54 +69,99 @@
                                 <p>State: ${data['state']}</p>
                             </div>
                             <a href="#" class="card-link more-details" id="">More details</a>
-                            <a onclick="updateDoc('${doc.id}')" href="#" class="card-link complete">Complete</a>
+                            <a onclick="updateDoc('${doc.id}', 'accept')" href="#" class="card-link" id="">Accept</a>
                             </div>
                         </div>`
-                    );
-                });
+                        );
+                    });
                 }
                 console.log('refresh');
             });
-        $('body').delegate('.more-details', 'click', function(e){
+
+        db.collection("schedule").where("status", "==", "Accepted").where("pic", "==", {{user.id}})
+        .onSnapshot(function (querySnapshot) {
+            $('.accepted-list').html("");
+            if (querySnapshot.empty) {
+                $('.accepted-list').append(`<p id="none-message">All clear!</p>`);
+            } else {
+                querySnapshot.forEach(function (doc) {
+                    var data = doc.data();
+                    $('.accepted-list').append(
+                        `<div class="card">
+                        <div class="card-body">
+                        <h5 class="card-title">${data['medicine name']}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted"><i>${data['status']} by You</i></h6>
+                        <p>Scheduled on: ${doc.id}</p>
+                        <div class="hide-details" style="display: none;">
+                            <p>Username: ${data['username']}</p>
+                            <p>Address Line 1: ${data['address line 1']}</p>
+                            <p>Address Line 2: ${data['address line 2']}</p>
+                            <p>PostCode: ${data['postcode']}</p>
+                            <p>State: ${data['state']}</p>
+                        </div>
+                        <a href="#" class="card-link more-details" id="">More details</a>
+                        <a onclick="updateDoc('${doc.id}', 'complete')" href="#" class="card-link complete">Complete</a>
+                        <a onclick="updateDoc('${doc.id}', 'reject')" href="#" class="card-link" id="">Reject</a>
+                        </div>
+                    </div>`
+                    );
+                });
+            }
+            console.log('refresh');
+        });
+        $('body').delegate('.more-details', 'click', function (e) {
             e.preventDefault();
             console.log('pressed');
             $(this).prev().toggle();
-            if ($(this).prev().css('display') == 'none'){
+            if ($(this).prev().css('display') == 'none') {
                 $(this).text("More Detail");
-            }else {
+            } else {
                 $(this).text("Less Detail");
             }
         });
-        
+
     });
-    function updateDoc(id) {
+    function updateDoc(id, field) {
         console.log(id);
-        var doc = db.collection("schedule").doc(`${id}`);
-        doc.update({'status': 'Completed'}).then(function() {
-            console.log("Update successful");
-        });
-        var email = "";
-        doc.get().then(function(doc) {
-            if (doc.exists) {
-                var url = "/partner-complete";
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: {
-                        email: doc.data()['email'],
-                        update: true
-                    }
-                }).done(function(data) {
-                    console.log(data.status);
-                });
-            }
-            
-        });
-        console.log(email);
-        
+        if (field == 'complete') {
+            var doc = db.collection("schedule").doc(`${id}`);
+            doc.update({ 'status': 'Completed' }).then(function () {
+                console.log("Update successful");
+            });
+            var email = "";
+            doc.get().then(function (doc) {
+                if (doc.exists) {
+                    var url = "/partner-complete";
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            email: doc.data()['email'],
+                            update: true
+                        }
+                    }).done(function (data) {
+                        console.log(data.status);
+                    });
+                }
+
+            });
+            console.log(email);
+        } else if (field == "accept") {
+            var doc = db.collection("schedule").doc(`${id}`);
+            doc.update({ 'status': 'Accepted', 'pic': collectorId}).then(function () {
+                console.log("Update successful");
+            });
+        } else {
+            var doc = db.collection("schedule").doc(`${id}`);
+            doc.update({ 'status': 'Pending', 'pic': null}).then(function () {
+                console.log("Update successful");
+            });
+        }
+
+
         return false;
     }
-    
-    
+
+
 </script>
 {% endblock %}

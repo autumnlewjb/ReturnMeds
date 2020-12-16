@@ -167,8 +167,9 @@ def schedule():
             'address line 1': addr_1,
             'address line 2': addr_2,
             'state': state,
-            'status': 'pending',
-            'postcode': postcode
+            'status': 'Pending',
+            'pic': None,
+            'postcode': postcode, 
         }
         fdb.collection('schedule').document(str(datetime.now())).set(data)
         return redirect(url_for('ongoing'))
@@ -187,7 +188,7 @@ def schedule():
 @role_required('User')
 @login_required
 def ongoing():
-    docs = fdb.collection('schedule').where('email', '==', current_user.email).where('status', '==', 'pending').stream()
+    docs = fdb.collection('schedule').where('email', '==', current_user.email).where('status', '==', 'Pending').stream()
     records = list()
     for doc in docs:
         doc_dict = doc.to_dict()
@@ -245,7 +246,7 @@ def partner_profile():
 @login_required
 def partner_ongoing():
     
-    return render_template('partner/ongoing.html')
+    return render_template('partner/ongoing.html', user=current_user)
 
 
 @app.route('/partner-complete', methods=['POST', 'GET'])
