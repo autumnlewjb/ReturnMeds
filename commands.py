@@ -13,6 +13,7 @@ def start_debug():
     admin_role = Role(name='Admin')
     user_role = Role(name='User')
     partner_role = Role(name='Partner')
+    collab_role = Role(name='Collab')
 
     new_address = Address(
         address_1='taman admin',
@@ -51,6 +52,16 @@ def start_debug():
         roles=[user_role]
     )
 
+    new_collab = User(
+        first_name='the',
+        last_name='collab',
+        username='collab',
+        email='collab@returnmed.com',
+        password=pbkdf2_sha256.hash('collabgg'),
+        address=[new_address],
+        roles=[collab_role]
+    )
+
     body_check = Reward(
         title='Body Check',
         description='Free body check',
@@ -63,7 +74,7 @@ def start_debug():
         cost=3,
     )
 
-    new_collab = Collab(
+    org_collab = Collab(
         org_name='Hospital AA',
         rewards=[body_check, consult],
     )
@@ -72,14 +83,16 @@ def start_debug():
     db.session.add(new_user)
     db.session.add(new_admin)
     db.session.add(new_partner)
+    db.session.add(new_collab)
 
     db.session.add(admin_role)
     db.session.add(user_role)
     db.session.add(partner_role)
+    db.session.add(collab_role)
 
     db.session.add(body_check)
     db.session.add(consult)
-    db.session.add(new_collab)
+    db.session.add(org_collab)
 
     db.session.commit()
 

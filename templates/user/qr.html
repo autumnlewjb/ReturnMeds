@@ -1,0 +1,20 @@
+{% extends 'user/user_base.html' %}
+
+{%block head%}
+<style>
+    img {
+        height: 20rem;
+        width: auto;
+        align-items: center;
+    }
+</style>
+{%endblock%}
+
+{%block body%}
+<div class="container">
+    <div class="row">
+        <div class="col text-center">
+            <img src="{{ uri }}" alt="qr code">
+        </div>
+    </div>
+</div>{%endblock%}

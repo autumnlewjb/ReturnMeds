@@ -9,6 +9,8 @@ from flask_login import login_user, logout_user, current_user, LoginManager, log
 from passlib.hash import pbkdf2_sha256
 import os
 from firestore import *
+import pyqrcode
+from base64 import b64encode
 
 
 app = Flask(__name__)
@@ -67,6 +69,8 @@ def login():
                 return redirect(url_for('admin_home'))
             elif 'Partner' in role_str:
                 return redirect(url_for('partner_home'))
+            elif 'Collab' in role_str:
+                return redirect(url_for('collab_home'))
             else:
                 return redirect(url_for('user_home'))
         else:
@@ -142,6 +146,13 @@ def partner_home():
     return render_template('partner/partner_home.html', user=current_user)
 
 
+@app.route('/collab')
+@role_required('Collab')
+@login_required
+def collab_home():
+    return "Hello collab! "
+
+
 @app.route('/profile')
 @login_required
 def profile():
@@ -174,6 +185,7 @@ def schedule():
         fdb.collection('schedule').document(str(datetime.now())).set(data)
         return redirect(url_for('ongoing'))
     else:
+        print('address: ', current_user.address)
         address_obj = current_user.address[0]
         data = {
             'addr-1': address_obj.address_1,
@@ -314,25 +326,40 @@ def list_reward(id):
     return render_template('collab/select_reward.html', reward_opt=rewards)
 
 
-@app.route('/reward/<int:id>/claim')
+@app.route('/reward/<int:reward_id>/qr-claim')
 @role_required('User')
 @login_required
-def claim_reward(id):
+def qr_claim(reward_id):
+    url = request.base_url
+    url = url.replace('qr-claim', 'claim')
+    url = url + f'/{current_user.id}'
+    qr = pyqrcode.create(url)
+    encoded = qr.png_as_base64_str(scale=20)
+    mime = "image/jpeg"
+    uri = "data:%s;base64,%s" % (mime, encoded)
+    return render_template('user/qr.html', uri=uri)
+
+
+@app.route('/reward/<int:reward_id>/claim/<int:user_id>')
+@role_required('Collab')
+@login_required
+def claim_reward(reward_id, user_id):
+    user = User.query.filter_by(id=id).first()
     reward = Reward.query.filter_by(id=id).first()
-    current_user.reward -= reward.cost
+    user.reward -= reward.cost
     db.session.commit()
 
     data = {
-        'email': current_user.email,
+        'email': user.email,
         'reward id': id,
-        'before reward': current_user.reward + reward.cost, 
-        'after reward': current_user.reward,
+        'before reward': user.reward + reward.cost, 
+        'after reward': user.reward,
     }
 
     fdb.collection('reward').document(str(datetime.now())).set(data)
 
-    return redirect(url_for('profile'))
+    return redirect('/collab')
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
