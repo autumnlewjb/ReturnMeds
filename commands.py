@@ -1,6 +1,7 @@
 from database import db
 from models import *
 from passlib.hash import pbkdf2_sha256
+import copy
 
 
 def create_tables():
@@ -28,7 +29,7 @@ def start_debug():
         username='admin',
         email='admin@returnmed.com',
         password=pbkdf2_sha256.hash('adminhehe'),
-        address=[new_address],
+        address=[copy.deepcopy(new_address)],
         roles=[admin_role, user_role, partner_role]
     )
 
@@ -38,7 +39,7 @@ def start_debug():
         username='partner',
         email='partner@returnmed.com',
         password=pbkdf2_sha256.hash('partnerhuhu'),
-        address=[new_address],
+        address=[copy.deepcopy(new_address)],
         roles=[partner_role]
     )
 
@@ -48,7 +49,7 @@ def start_debug():
         username='user',
         email='user@returnmed.com',
         password=pbkdf2_sha256.hash('userhaha'),
-        address=[new_address],
+        address=[copy.deepcopy(new_address)],
         roles=[user_role]
     )
 
@@ -58,7 +59,7 @@ def start_debug():
         username='collab',
         email='collab@returnmed.com',
         password=pbkdf2_sha256.hash('collabgg'),
-        address=[new_address],
+        address=[copy.deepcopy(new_address)],
         roles=[collab_role]
     )
 
@@ -78,17 +79,18 @@ def start_debug():
         org_name='Hospital AA',
         rewards=[body_check, consult],
     )
-
-
-    db.session.add(new_user)
+    
     db.session.add(new_admin)
-    db.session.add(new_partner)
+    db.session.add(new_user)
     db.session.add(new_collab)
+    db.session.add(new_partner)
 
     db.session.add(admin_role)
     db.session.add(user_role)
     db.session.add(partner_role)
     db.session.add(collab_role)
+
+    db.session.commit()
 
     db.session.add(body_check)
     db.session.add(consult)

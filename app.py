@@ -1,5 +1,6 @@
 from datetime import datetime
 from functools import wraps
+from threading import currentThread
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask.ctx import copy_current_request_context
 import database
@@ -17,8 +18,8 @@ app = Flask(__name__)
 
 login_manager = LoginManager()
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SECRET_KEY'] = "thisissecret3050hellosecretjasddafkjsdalfjlksd"
 
 database.init_app(app)
@@ -129,6 +130,7 @@ def about():
 @role_required('Admin')
 @login_required
 def admin_home():
+    print(current_user.address)
     return "Admin page"
 
 
@@ -143,6 +145,7 @@ def user_home():
 @role_required('Partner')
 @login_required
 def partner_home():
+    print(current_user.address)
     return render_template('partner/partner_home.html', user=current_user)
 
 
@@ -150,7 +153,8 @@ def partner_home():
 @role_required('Collab')
 @login_required
 def collab_home():
-    return "Hello collab! "
+    print(current_user.address[0])
+    return f"Hello collab!\n{current_user.address[0].address_1}" 
 
 
 @app.route('/profile')
