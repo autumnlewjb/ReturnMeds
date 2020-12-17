@@ -14,7 +14,8 @@
                     <div class="card-body">
                         <h5 class="card-title">{{reward.title}}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{reward.description}}</h6>
-                        <a href="/reward/{{reward.id}}/claim" class="card-link more-details" id="">Claim for {{reward.cost}} reward pts</a>
+                        <!-- <a href="/reward/{{reward.id}}/claim" class="card-link more-details" id="">Claim for {{reward.cost}} reward pts</a> -->
+                        <a href="/reward/{{reward.id}}/qr-claim" class="card-link more-details" id="">Claim for {{reward.cost}} reward pts</a>
                     </div>
                 </div>
                 {% endfor %}
