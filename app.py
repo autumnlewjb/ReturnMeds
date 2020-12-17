@@ -274,7 +274,7 @@ def partner_complete():
         print(email)
         current_user.reward += 1
         user = User.query.filter_by(email=email).first()
-        user.reward += 1
+        user.reward = user.reward + 10
         db.session.commit()
         
         return jsonify({'status': 'done'})
@@ -348,14 +348,14 @@ def qr_claim(reward_id):
 @role_required('Collab')
 @login_required
 def claim_reward(reward_id, user_id):
-    user = User.query.filter_by(id=id).first()
-    reward = Reward.query.filter_by(id=id).first()
+    user = User.query.filter_by(id=user_id).first()
+    reward = Reward.query.filter_by(id=reward_id).first()
     user.reward -= reward.cost
     db.session.commit()
 
     data = {
         'email': user.email,
-        'reward id': id,
+        'reward id': user.id,
         'before reward': user.reward + reward.cost, 
         'after reward': user.reward,
     }
