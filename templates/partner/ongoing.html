@@ -47,7 +47,7 @@
     const collectorId = {{user.id}};
 
     $(document).ready(function () {
-        db.collection("schedule").where("status", "==", "Pending")
+        db.collection("schedule").where("status", "==", "Pending").orderBy("time created", "desc")
             .onSnapshot(function (querySnapshot) {
                 $('.record-list').html("");
                 if (querySnapshot.empty) {
@@ -78,7 +78,7 @@
                 console.log('refresh');
             });
 
-        db.collection("schedule").where("status", "==", "Accepted").where("pic", "==", {{user.id}})
+        db.collection("schedule").where("status", "==", "Accepted").where("pic", "==", {{user.id}}).orderBy("time created", "desc")
         .onSnapshot(function (querySnapshot) {
             $('.accepted-list').html("");
             if (querySnapshot.empty) {

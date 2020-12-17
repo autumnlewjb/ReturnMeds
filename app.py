@@ -274,7 +274,7 @@ def partner_complete():
         print(email)
         current_user.reward += 1
         user = User.query.filter_by(email=email).first()
-        user.reward = user.reward + 10
+        user.reward += 1
         db.session.commit()
         
         return jsonify({'status': 'done'})
@@ -326,7 +326,7 @@ def list_collab():
 @login_required
 def list_reward(id):
     collab = Collab.query.filter_by(id=id).first()
-    rewards = collab.rewards
+    rewards = [reward for reward in collab.rewards if reward.cost <= current_user.reward]
     return render_template('collab/select_reward.html', reward_opt=rewards)
 
 
@@ -350,17 +350,21 @@ def qr_claim(reward_id):
 def claim_reward(reward_id, user_id):
     user = User.query.filter_by(id=user_id).first()
     reward = Reward.query.filter_by(id=reward_id).first()
-    user.reward -= reward.cost
-    db.session.commit()
+    if (user.reward >= reward.cost):
+        user.reward -= reward.cost
+        db.session.commit()
 
-    data = {
-        'email': user.email,
-        'reward id': user.id,
-        'before reward': user.reward + reward.cost, 
-        'after reward': user.reward,
-    }
+        data = {
+            'email': user.email,
+            'reward id': user.id,
+            'before reward': user.reward + reward.cost, 
+            'after reward': user.reward,
+        }
 
-    fdb.collection('reward').document(str(datetime.now())).set(data)
+        fdb.collection('reward').document(str(datetime.now())).set(data)
+
+    else:
+        return "Claim reward failed!"
 
     return redirect('/collab')
 
