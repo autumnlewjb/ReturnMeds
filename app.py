@@ -170,6 +170,7 @@ def schedule():
             'status': 'Pending',
             'pic': None,
             'postcode': postcode, 
+            'time created': firestore.SERVER_TIMESTAMP
         }
         fdb.collection('schedule').document(str(datetime.now())).set(data)
         return redirect(url_for('ongoing'))
@@ -188,13 +189,13 @@ def schedule():
 @role_required('User')
 @login_required
 def ongoing():
-    docs = fdb.collection('schedule').where('email', '==', current_user.email).where('status', '==', 'Pending').stream()
+    docs = fdb.collection('schedule').where('email', '==', current_user.email).where('status', 'in', ['Pending', 'Accepted']).stream()
     records = list()
     for doc in docs:
         doc_dict = doc.to_dict()
         doc_dict['timestamp'] = doc.id
         records.append(doc_dict)
-    return render_template('user/ongoing.html', records=records)
+    return render_template('user/ongoing.html', records=records[::-1])
 
 
 @app.route('/unschedule')
@@ -335,4 +336,4 @@ def claim_reward(id):
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
