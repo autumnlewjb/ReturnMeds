@@ -154,7 +154,7 @@ def partner_home():
 @login_required
 def collab_home():
     print(current_user.address[0])
-    return f"Hello collab!\n{current_user.address[0].address_1}" 
+    return render_template('collab/collab_home.html', user=current_user)
 
 
 @app.route('/profile')
