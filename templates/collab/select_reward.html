@@ -19,6 +19,9 @@
                     </div>
                 </div>
                 {% endfor %}
+                {% if reward_opt|length == 0 %}
+                <p>You don't have enough reward point now.<br>Return more medicine to earn rewards!</p>
+                {% endif %}
             </div>
         </div>
     </div>
