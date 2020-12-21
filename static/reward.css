@@ -19,10 +19,6 @@
     border-color: rgb(158, 158, 43);
 }
 
-p {
-    text-align: center;
-}
-
 @media only screen and (orientation: portrait) {
     .list {
         margin-left: 0;

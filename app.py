@@ -319,7 +319,7 @@ def reward_history():
 @login_required
 def list_collab():
     collabs = Collab.query.all()
-    return render_template('collab/list.html', collabs=collabs)
+    return render_template('user/list.html', collabs=collabs)
 
 
 @app.route('/reward/<int:id>/option')
@@ -328,7 +328,7 @@ def list_collab():
 def list_reward(id):
     collab = Collab.query.filter_by(id=id).first()
     rewards = [reward for reward in collab.rewards if reward.cost <= current_user.reward]
-    return render_template('collab/select_reward.html', reward_opt=rewards)
+    return render_template('user/select_reward.html', reward_opt=rewards)
 
 
 @app.route('/reward/<int:reward_id>/qr-claim')
@@ -369,6 +369,13 @@ def claim_reward(reward_id, user_id):
 
     return redirect('/collab')
 
+
+def address_query(line1, line2, postcode, state):
+
+    query = (line1 + line2 + postcode + state).replace(" ", "+").replace(",", "%2C")
+
+    return "https://www.google.com/maps/search/?api=1&query=" + query
+    
 
 if __name__ == '__main__':
     app.run(debug=True)

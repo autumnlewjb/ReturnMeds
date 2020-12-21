@@ -55,6 +55,9 @@
                 } else {
                     querySnapshot.forEach(function (doc) {
                         var data = doc.data();
+                        var query = data['address line 1'] + data['address line 2'] + data['postcode'] + data['state'];
+                        query = query.replaceAll(/\s/g, "+").replaceAll(/,/g, "%2C");
+                        console.log(query)
                         $('.record-list').append(
                             `<div class="card">
                             <div class="card-body">
@@ -67,6 +70,9 @@
                                 <p>Address Line 2: ${data['address line 2']}</p>
                                 <p>PostCode: ${data['postcode']}</p>
                                 <p>State: ${data['state']}</p>
+                                <div id="address-search">
+                                    <a class="btn btn-light" target="_blank" href=https://www.google.com/maps/search/?api=1&query=${query}>Show in map</a>
+                                </div>
                             </div>
                             <a href="#" class="card-link more-details" id="">More details</a>
                             <a onclick="updateDoc('${doc.id}', 'accept')" href="#" class="card-link" id="">Accept</a>
@@ -86,6 +92,8 @@
             } else {
                 querySnapshot.forEach(function (doc) {
                     var data = doc.data();
+                    var query = data['address line 1'] + data['address line 2'] + data['postcode'] + data['state'];
+                    query = query.replaceAll(/\s/g, "+").replaceAll(/,/g, "%2C");
                     $('.accepted-list').append(
                         `<div class="card">
                         <div class="card-body">
@@ -98,6 +106,9 @@
                             <p>Address Line 2: ${data['address line 2']}</p>
                             <p>PostCode: ${data['postcode']}</p>
                             <p>State: ${data['state']}</p>
+                            <div id="address-search">
+                                <a class="btn btn-light" target="_blank" href=https://www.google.com/maps/search/?api=1&query=${query}>Show in map</a>
+                            </div>
                         </div>
                         <a href="#" class="card-link more-details" id="">More details</a>
                         <a onclick="updateDoc('${doc.id}', 'complete')" href="#" class="card-link complete">Complete</a>

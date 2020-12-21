@@ -16,6 +16,10 @@ h3 {
     padding-top: 0.2rem;
 }
 
+#address-search {
+    text-align: right;
+}
+
 @media only screen and (orientation: portrait) {
     .list {
         margin-left: 0;
