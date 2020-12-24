@@ -1,0 +1,35 @@
+{% extends 'collab/collab_base.html' %}
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='service.css')}}">
+{% endblock %}
+{% block body %}
+<div class="container table-container">
+    <div class="row">
+        <div class="col button-container">
+            <a href="{{url_for('add_service')}}" class="btn btn-primary add-service">Add service</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Reward</th>
+                            <th>Description</th>
+                            <th>Cost</th>
+                        </tr>
+                        {% for reward in rewards %}
+                        <tr>
+                            <td>{{reward.title}}</td>
+                            <td>{{reward.description}}</td>
+                            <td>{{reward.cost}}</td>
+                        </tr>
+                        {% endfor %}
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

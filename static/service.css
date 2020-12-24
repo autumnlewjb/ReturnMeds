@@ -1,0 +1,13 @@
+.table-container {
+    background-color: rgba(231, 241, 221, 0.527);
+    transform: translateY(5rem);
+    border-radius: 0.5rem;
+}
+
+.add-service {
+    margin: 1rem;
+}
+
+.button-container {
+    text-align: right;
+}

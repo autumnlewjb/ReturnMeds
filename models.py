@@ -13,6 +13,7 @@ class User(UserMixin, db.Model):
     reward = db.Column(db.Integer(), primary_key=False, default=0)
     address = db.relationship('Address', backref='user')
     roles = db.relationship('Role', secondary='user_roles')
+    link_account = db.relationship('Collab', backref='user')
 
 
 class Address(db.Model):
@@ -43,6 +44,7 @@ class Collab(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     org_name = db.Column(db.String(200), nullable=False)
     rewards = db.relationship('Reward', backref='collab', lazy=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
 
 
 class Reward(db.Model):

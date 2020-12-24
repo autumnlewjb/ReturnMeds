@@ -370,6 +370,37 @@ def claim_reward(reward_id, user_id):
     return redirect('/collab')
 
 
+@app.route('/collab/services')
+@role_required('Collab')
+@login_required
+def service():
+    collab = current_user.link_account[0]
+    rewards = collab.rewards
+    return render_template('collab/service.html', rewards=rewards)
+
+
+@app.route('/collab/add-services', methods=['GET', 'POST'])
+@role_required('Collab')
+@login_required
+def add_service():
+    if request.method == 'POST':
+        new_reward = Reward(
+            title=request.form.get('name'),
+            description=request.form.get('description'),
+            cost=request.form.get('cost'),
+        )
+
+        collab_account = current_user.link_account[0]
+        collab_account.rewards.append(new_reward)
+
+        db.session.add(new_reward)
+        db.session.commit()
+
+        return redirect(url_for('service'))
+    else:
+        return render_template('collab/add_service.html')
+
+
 def address_query(line1, line2, postcode, state):
 
     query = (line1 + line2 + postcode + state).replace(" ", "+").replace(",", "%2C")

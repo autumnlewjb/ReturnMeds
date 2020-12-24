@@ -53,16 +53,6 @@ def start_debug():
         roles=[user_role]
     )
 
-    new_collab = User(
-        first_name='the',
-        last_name='collab',
-        username='collab',
-        email='collab@returnmed.com',
-        password=pbkdf2_sha256.hash('collabgg'),
-        address=[copy.deepcopy(new_address)],
-        roles=[collab_role]
-    )
-
     body_check = Reward(
         title='Body Check',
         description='Free body check',
@@ -78,6 +68,17 @@ def start_debug():
     org_collab = Collab(
         org_name='Hospital AA',
         rewards=[body_check, consult],
+    )
+
+    new_collab = User(
+        first_name='the',
+        last_name='collab',
+        username='collab',
+        email='collab@returnmed.com',
+        password=pbkdf2_sha256.hash('collabgg'),
+        address=[copy.deepcopy(new_address)],
+        roles=[collab_role],
+        link_account=[org_collab]
     )
     
     db.session.add(new_admin)
