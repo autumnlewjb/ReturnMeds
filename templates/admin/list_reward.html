@@ -1,0 +1,89 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.1/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.1/js/jquery.dataTables.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+
+<style>
+    .big-container {
+        background-color: white;
+        margin: 2rem;
+        padding: 2rem;
+        border-radius: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div id="container-fluid" class="big-container">
+    <div class="row">
+        <div class="col">
+            <table id="myTable" class="display" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>After Reward</th>
+                        <th>Before Reward</th>
+                        <th>Reward ID</th>
+                        <!-- <th class="none">Address Line 1</th>
+                        <th class="none">Address Line 2</th>
+                        <th class="none">Postcode</th>
+                        <th class="none">State</th> -->
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+</div>
+<script>
+    $(document).ready( function () {
+        // Initialize Cloud Firestore through Firebase
+        firebase.initializeApp({
+            apiKey: "AIzaSyBbazAhPXWwMql5isb1dva7q5nYHQjSrz8",
+            authDomain: "returnmeds-bd71b.firebaseapp.com",
+            projectId: "returnmeds-bd71b",
+            storageBucket: "returnmeds-bd71b.appspot.com",
+            messagingSenderId: "1001149789264",
+            appId: "1:1001149789264:web:b4b69c1e1df95b3e0ecd55",
+            measurementId: "G-MVES52LJ7Q"
+        });
+
+        var db = firebase.firestore();
+        var data =[];
+
+        var docRef = db.collection("reward").get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                data.push(doc.data());
+            });
+        }).then(function() {
+            $('#myTable').show();
+            $('#myTable').DataTable({
+                data: data,
+                responsive: true,
+                scrollX: true,
+                columnDefs:[{className: 'all', targets: '_all'}],
+                columns:[
+                    {data: 'email'},
+                    {data: 'before reward'},
+                    {data: 'after reward'},
+                    {data: 'reward id'},
+                    // {data: 'address line 1'},
+                    // {data: 'address line 2'},
+                    // {data: 'postcode'},
+                    // {data: 'state'}
+                ]
+            });
+        }).catch(function(error) {
+            console.log("Error getting document:", error);
+        });
+
+
+        
+
+        
+    } );
+</script>
+{% endblock %}

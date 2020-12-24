@@ -1,0 +1,112 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+<title>Admin Page</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald">
+<style>
+    .table-title {
+        text-align: left;
+        font-family: Oswald;
+    }
+
+    body {
+        background-color: rgba(128, 128, 128, 0.527) ;
+    }
+
+    .content-container {
+        background-color: white;
+        margin: 20px;
+    }
+
+    table {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row content-container justify-content-center rounded">
+        <div class="col">
+            <div class="row justify-content-start align-items-center">
+                <div class="col table-title">
+                    <h1>Users</h1>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col table-responsive">
+                    {% if users %}
+                        <table class="table">
+                            <tr>
+                                <th>id</th>
+                                <th>first name</th>
+                                <th>last name</th>
+                                <th>username</th>
+                                <th>email</th>
+                                <th>reward</th>
+                                <th>roles</th>
+                            </tr>
+                            {% for user in users %}
+                                <tr>
+                                    <td>{{user.id}}</td>
+                                    <td>{{user.first_name}}</td>
+                                    <td>{{user.last_name}}</td>
+                                    <td>{{user.username}}</td>
+                                    <td>{{user.email}}</td>
+                                    <td>{{user.reward}} pt</td>
+                                    <td>{{user.roles}}</td>
+                                </tr>
+                            {% endfor %}
+                            <tr id="add-new" style="display: none;">
+                                <form action="/admin/add-user" method="POST">
+                                    <td><input type="number"  class="form-control" value="{{next_id}}" style="text-align: center;" readonly></td>
+                                    <td><input type="text" name="name" class="form-control" placeholder="username"></td>
+                                    <td><input type="text" name="age" class="form-control" placeholder="age"></td>
+                                    <td><input type="text" name="school" class="form-control" placeholder="school"></td>
+                                    <td><input type="email" name="email" class="form-control" placeholder="email"></td>
+                                    <td><input type="password" name="password" class="form-control" placeholder="password"></td>
+                                    <td>
+                                        <input type="submit" class="btn btn-success" value="Confirm">
+                                    </td>
+                                </form>
+                            </tr>
+                        </table>
+                    {% else %}
+                        <br>
+                        <p>There is no current registered users. </p>
+                        <table class="table">
+                            <tr>
+                                <th>id</th>
+                                <th>name</th>
+                                <th>age</th>
+                                <th>school</th>
+                                <th>email</th>
+                                <th>password</th>
+                                <th>actions</th>
+                            </tr>
+                            <tr id="add-new" style="display: none;">
+                                <form action="/admin/add-user" method="POST">
+                                    <td><input type="number"  class="form-control" value="{{next_id}}" style="text-align: center;" readonly></td>
+                                    <td><input type="text" name="name" class="form-control" placeholder="username"></td>
+                                    <td><input type="text" name="age" class="form-control" placeholder="age"></td>
+                                    <td><input type="text" name="school" class="form-control" placeholder="school"></td>
+                                    <td><input type="email" name="email" class="form-control" placeholder="email"></td>
+                                    <td><input type="password" name="password" class="form-control" placeholder="password"></td>
+                                    <td>
+                                        <input type="submit" class="btn btn-success" value="Confirm">
+                                    </td>
+                                </form>
+                            </tr>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function add_new() {
+        var add_new_column = document.getElementById('add-new').style.display = "table-row";
+    }
+</script>
+{% endblock %}

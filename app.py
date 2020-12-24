@@ -131,7 +131,29 @@ def about():
 @login_required
 def admin_home():
     print(current_user.address)
-    return "Admin page"
+    return render_template('admin/admin_home.html')
+
+
+@app.route('/admin/user')
+@role_required('Admin')
+@login_required
+def list_user():
+    all_users = User.query.all()
+    return render_template('admin/list_user.html', users=all_users)
+
+
+@app.route('/admin/transaction')
+@role_required('Admin')
+@login_required
+def list_transac():
+    return render_template('admin/transac.html')
+
+
+@app.route('/admin/reward')
+@role_required('Admin')
+@login_required
+def admin_reward():
+    return render_template('admin/list_reward.html')
 
 
 @app.route('/user')
