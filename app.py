@@ -56,7 +56,7 @@ def handle_needs_login():
 def redirect_dest(fallback):
     dest_url = request.args.get('next')
     if not dest_url:
-        dest_url = url_for(fallback)
+        dest_url = fallback
     return redirect(dest_url)
 
 
@@ -196,9 +196,16 @@ def change_role():
         if request.form.get('collab'):
             if collab_role not in target_user.roles:
                 target_user.roles.append(collab_role)
+                new_collab = Collab(
+                    org_name=target_user.username,
+                )
+                target_user.link_account.append(new_collab)
         else:
             if collab_role in target_user.roles:
                 target_user.roles.remove(collab_role)
+                for account in target_user.link_account:
+                    db.session.delete(account)
+                target_user.link_account.clear()
 
         if request.form.get('partner'):
             if partner_role not in target_user.roles:
@@ -423,7 +430,8 @@ def list_collab():
 @login_required
 def list_reward(id):
     collab = Collab.query.filter_by(id=id).first()
-    rewards = [reward for reward in collab.rewards if reward.cost <= current_user.reward]
+    # rewards = [reward for reward in collab.rewards if reward.cost <= current_user.reward]
+    rewards = [reward for reward in collab.rewards]
     return render_template('user/select_reward.html', reward_opt=rewards)
 
 
