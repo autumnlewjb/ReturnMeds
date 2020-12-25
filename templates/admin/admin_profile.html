@@ -1,0 +1,40 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='user_home.css')}}">
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid" style="text-align: center;">
+    <div class="row">
+        <div class="col">
+            <h1>Welcome {{user.username}}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="d-flex justify-content-center">
+                <div class="profile-box" style="background-color: white;">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Username</td>
+                                <td>{{user.username}}</td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td>{{user.email}}</td>
+                            </tr>
+                            <tr>
+                                <td>Reward</td>
+                                <td>{{user.reward}} <span>pt</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -148,12 +148,69 @@ def admin_home():
     return render_template('admin/admin_home.html')
 
 
+@app.route('/admin/profile')
+@role_required('Admin')
+@login_required
+def admin_profile():
+    return render_template('admin/admin_profile.html', user=current_user)
+
+
 @app.route('/admin/user')
 @role_required('Admin')
 @login_required
 def list_user():
     all_users = User.query.all()
-    return render_template('admin/list_user.html', users=all_users)
+    index = list(range(0, len(all_users), 1))
+    roles = [[role.name for role in user.roles] for user in all_users]
+    print(roles)
+    return render_template('admin/list_user.html', users=all_users, roles=roles, index=index)
+
+
+@app.route('/admin/change_role', methods=['POST', 'GET'])
+@role_required('Admin')
+@login_required
+def change_role():
+    if request.method == 'POST':
+        user_id = request.args.get('user_id')
+        target_user = User.query.filter_by(id=user_id).first()
+
+        user_role = Role.query.filter_by(name='User').first()
+        admin_role = Role.query.filter_by(name='Admin').first()
+        collab_role = Role.query.filter_by(name='Collab').first()
+        partner_role = Role.query.filter_by(name='Partner').first()
+
+        if request.form.get('user'): 
+            if user_role not in target_user.roles:
+                target_user.roles.append(user_role)
+        else:
+            if user_role in target_user.roles:
+                target_user.roles.remove(user_role)
+
+        if request.form.get('admin'): 
+            if admin_role not in target_user.roles:
+                target_user.roles.append(admin_role)
+        else:
+            if admin_role in target_user.roles:
+                target_user.roles.remove(admin_role)
+        
+        if request.form.get('collab'):
+            if collab_role not in target_user.roles:
+                target_user.roles.append(collab_role)
+        else:
+            if collab_role in target_user.roles:
+                target_user.roles.remove(collab_role)
+
+        if request.form.get('partner'):
+            if partner_role not in target_user.roles:
+                target_user.roles.append(partner_role)
+        else:
+            if partner_role in target_user.roles:
+                target_user.roles.remove(partner_role)
+
+        db.session.commit()
+        return redirect(url_for('list_user'))
+    else:
+        return redirect(url_for('list_user'))
 
 
 @app.route('/admin/transaction')

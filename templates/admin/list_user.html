@@ -46,15 +46,52 @@
                                 <th>reward</th>
                                 <th>roles</th>
                             </tr>
-                            {% for user in users %}
+                            {% for i in index %}
                                 <tr>
-                                    <td>{{user.id}}</td>
-                                    <td>{{user.first_name}}</td>
-                                    <td>{{user.last_name}}</td>
-                                    <td>{{user.username}}</td>
-                                    <td>{{user.email}}</td>
-                                    <td>{{user.reward}} pt</td>
-                                    <td>{{user.roles}}</td>
+                                    <td>{{users[i].id}}</td>
+                                    <td>{{users[i].first_name}}</td>
+                                    <td>{{users[i].last_name}}</td>
+                                    <td>{{users[i].username}}</td>
+                                    <td>{{users[i].email}}</td>
+                                    <td>{{users[i].reward}} pt</td>
+                                    <td>
+                                        <form action="{{url_for('change_role', user_id=users[i].id)}}" method='POST'>
+                                            <div class="submit-form">
+                                                <div class="form-check form-check-inline">
+                                                    {% if 'User' in roles[i] %}
+                                                    <input name="user" class="form-check-input" type="checkbox" id="inlineCheckbox1-{{users[i].id}}" value="option1" checked>
+                                                    {% else %}
+                                                    <input name="user" class="form-check-input" type="checkbox" id="inlineCheckbox1-{{users[i].id}}" value="option1">
+                                                    {% endif %}
+                                                    <label class="form-check-label" for="inlineCheckbox1-{{users[i].id}}">User</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    {% if 'Admin' in roles[i] %}
+                                                    <input name="admin" class="form-check-input" type="checkbox" id="inlineCheckbox2-{{users[i].id}}" value="option1" checked>
+                                                    {% else %}
+                                                    <input name="admin" class="form-check-input" type="checkbox" id="inlineCheckbox2-{{users[i].id}}" value="option1">
+                                                    {% endif %}
+                                                    <label class="form-check-label" for="inlineCheckbox2-{{users[i].id}}">Admin</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    {% if 'Collab' in roles[i] %}
+                                                    <input  name="collab" class="form-check-input" type="checkbox" id="inlineCheckbox3-{{users[i].id}}" value="option1" checked>
+                                                    {% else %}
+                                                    <input name="collab" class="form-check-input" type="checkbox" id="inlineCheckbox3-{{users[i].id}}" value="option1">
+                                                    {% endif %}
+                                                    <label class="form-check-label" for="inlineCheckbox3-{{users[i].id}}">Collab</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    {% if 'Partner' in roles[i] %}
+                                                    <input name="partner" class="form-check-input" type="checkbox" id="inlineCheckbox4-{{users[i].id}}" value="option1" checked>
+                                                    {% else %}
+                                                    <input name="partner" class="form-check-input" type="checkbox" id="inlineCheckbox4-{{users[i].id}}" value="option1">
+                                                    {% endif %}
+                                                    <label class="form-check-label" for="inlineCheckbox4-{{users[i].id}}">Partner</label>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             <tr id="add-new" style="display: none;">
@@ -105,8 +142,13 @@
     </div>
 </div>
 <script>
-    function add_new() {
-        var add_new_column = document.getElementById('add-new').style.display = "table-row";
-    }
+    $(document).ready(function() {
+        $('.submit-form').on('change', function(){
+            this.parentNode.submit(function(event) {
+                event.preventDefault();
+            });
+            return false;
+        })
+    })
 </script>
 {% endblock %}
