@@ -398,6 +398,9 @@ def reward_history():
     for reward in rewards:
         temp = reward.to_dict()
         query = Reward.query.filter_by(id=int(temp['reward id'])).first()
+        print(temp['reward id'])
+        print(query)
+        print(Reward.query.all())
         temp['timestamp'] = reward.id
         temp['title'] = query.title
         temp['organization'] = query.collab.org_name
