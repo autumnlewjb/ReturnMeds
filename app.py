@@ -1,7 +1,7 @@
 from datetime import datetime
 from functools import wraps
 from threading import currentThread
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from flask.ctx import copy_current_request_context
 import database
 from models import *
@@ -46,6 +46,20 @@ def role_required(role_name):
     return decorator
 
 
+@login_manager.unauthorized_handler
+def handle_needs_login():
+    flash("You have to be logged in to access this page.")
+    next = url_for(request.endpoint, **request.view_args)
+    return redirect(url_for('login', next=next))
+
+
+def redirect_dest(fallback):
+    dest_url = request.args.get('next')
+    if not dest_url:
+        dest_url = url_for(fallback)
+    return redirect(dest_url)
+
+
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template('404.html'), 500
@@ -71,7 +85,7 @@ def login():
             elif 'Partner' in role_str:
                 return redirect(url_for('partner_home'))
             elif 'Collab' in role_str:
-                return redirect(url_for('collab_home'))
+                return redirect_dest(fallback=url_for('collab_home'))
             else:
                 return redirect(url_for('user_home'))
         else:
@@ -379,7 +393,7 @@ def claim_reward(reward_id, user_id):
 
         data = {
             'email': user.email,
-            'reward id': user.id,
+            'reward id': reward.id,
             'before reward': user.reward + reward.cost, 
             'after reward': user.reward,
         }
