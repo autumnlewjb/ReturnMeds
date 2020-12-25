@@ -1,1 +1,108 @@
 {% extends 'admin/admin_base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<style>
+    html, body {
+        margin: 0;
+        border: 0;
+        padding: 0;
+    }
+    
+    body {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    #bg-vid {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .video-container {
+        position: absolute;;
+        height: 100%;
+        margin: 0;
+        border: 0;
+        padding: 0;
+        z-index: -1;
+    }
+
+    .text-container {
+        position: absolute;
+        display: flex;
+        height: 100vh;
+        z-index: 1;
+        color: white;
+        font-family: Roboto;
+        font-size: 100px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tint {
+        background-color: black;
+        opacity: 0.5;
+        z-index: 0;
+        height: 100%;
+        position:absolute;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div>
+    <div class="container-fluid video-container">
+        <video src="static/video/background_home.mp4" autoplay muted loop id="bg-vid" type="video/mp4"></video>
+    </div>
+    <div class="container-fluid tint"></div>
+    <div class="container-fluid text-container align-middle">
+        <div class="">
+            <p style="font-size: 70px;" class=""><span id="content"></span><span style="font-size: 90px; color: orange;" id="caret">|</span></p>
+        </div>
+    </div>
+</div>
+<script>
+    var i = 0;
+    var text = 'Welcome, developer!'
+    var speed = 90;
+    var caretSpeed = 500;
+    var caretOpacity = true;
+    var caret = document.getElementById("caret")
+    function typeWriter() {
+        var timeout;
+        if (i < text.length) {
+            document.getElementById('content').innerHTML += text.charAt(i)
+            i ++;
+            console.log('this is run');
+            timeout = setTimeout(typeWriter, speed);
+        }else {
+            console.log('clear timeout')
+            clearTimeout(timeout);
+            console.log(i);
+        }
+    }
+
+    function blinkingCaret(){
+        if (caretOpacity) {
+            caret.style.opacity = "0";
+            caretOpacity = false;
+        } else {
+            caret.style.opacity = "1";
+            caretOpacity = true;
+        }
+    }
+
+    function caretBlink() {
+        setInterval(blinkingCaret, caretSpeed);
+    }
+
+    function onLoad() {
+        caretBlink();
+        typeWriter();
+    }
+    window.onload = onLoad;
+</script>
+{% endblock %}
