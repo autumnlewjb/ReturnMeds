@@ -430,8 +430,8 @@ def list_collab():
 @login_required
 def list_reward(id):
     collab = Collab.query.filter_by(id=id).first()
-    # rewards = [reward for reward in collab.rewards if reward.cost <= current_user.reward]
-    rewards = [reward for reward in collab.rewards]
+    rewards = [reward for reward in collab.rewards if reward.cost <= current_user.reward]
+    # rewards = [reward for reward in collab.rewards]
     return render_template('user/select_reward.html', reward_opt=rewards)
 
 
